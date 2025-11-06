@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>特别致敬</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+            position: relative;
+            z-index: 10;
+            border: 5px solid #ffd700;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700;
+            }
+            to {
+                box-shadow: 0 0 30px #ff6b6b, 0 0 40px #ff6b6b;
+            }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+
+        .emoji-float {
+            position: fixed;
+            font-size: 2em;
+            z-index: 1;
+            animation: floating 3s ease-in-out infinite;
+            user-select: none;
+        }
+
+        @keyframes floating {
+            0%, 100% {
+                transform: translate3d(0, 0%, 0);
+            }
+            50% {
+                transform: translate3d(0, 50%, 0);
+            }
+        }
+
+        .abstract-element {
+            position: fixed;
+            font-size: 3em;
+            opacity: 0.7;
+            z-index: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .breathing {
+            animation: breathe 2s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主要消息框 -->
+    <div class="message-box breathing">
+        <h1>黄沛涵班长<br>鞠躬精粹死而后已</h1>
+        <div style="font-size: 3em; margin-top: 20px;">💫🌟✨🎉🔥</div>
+    </div>
+
+    <!-- 浮动emoji -->
+    <div id="emoji-container"></div>
+
+    <!-- 抽象元素 -->
+    <div class="abstract-element" style="top: 10%; left: 5%;">🦄</div>
+    <div class="abstract-element" style="top: 20%; right: 10%;">🍌</div>
+    <div class="abstract-element" style="bottom: 30%; left: 15%;">🛸</div>
+    <div class="abstract-element" style="bottom: 20%; right: 5%;">🌈</div>
+
+    <script>
+        // 浮动emoji数组
+        const emojis = ['😂', '🚀', '🎊', '💥', '🌟', '✨', '🎈', '🎯', '🦁', '🐲', '🍕', '🎸', '👑', '💎', '🔥', '🦆', '🍩', '🎪', '🤡', '👾'];
+        
+        const container = document.getElementById('emoji-container');
+        
+        // 创建50个浮动emoji
+        for (let i = 0; i < 50; i++) {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji-float';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            // 随机位置
+            const left = Math.random() * 100;
+            const top = Math.random() * 100;
+            emoji.style.left = left + 'vw';
+            emoji.style.top = top + 'vh';
+            
+            // 随机动画延迟和持续时间
+            emoji.style.animationDelay = Math.random() * 5 + 's';
+            emoji.style.animationDuration = (Math.random() * 4 + 2) + 's';
+            
+            // 随机大小
+            emoji.style.fontSize = (Math.random() * 2 + 1.5) + 'em';
+            
+            container.appendChild(emoji);
+        }
+
+        // 点击页面添加更多emoji
+        document.body.addEventListener('click', function(e) {
+            const clickEmoji = document.createElement('div');
+            clickEmoji.className = 'emoji-float';
+            clickEmoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            clickEmoji.style.left = e.clientX + 'px';
+            clickEmoji.style.top = e.clientY + 'px';
+            clickEmoji.style.fontSize = '3em';
+            clickEmoji.style.animationDuration = '1s';
+            document.body.appendChild(clickEmoji);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                clickEmoji.remove();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
