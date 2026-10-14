@@ -1,0 +1,77 @@
+name: Publish Huasheng to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.huasheng-source.tar.xz.b64'
+      - '.github/workflows/huasheng-pages.yml'
+      - 'index.html'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: huasheng-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout website repository
+        uses: actions/checkout@v4
+
+      - name: Restore original Next.js source code
+        shell: bash
+        run: |
+          mkdir -p huasheng-project
+          base64 --decode .huasheng-source.tar.xz.b64 > /tmp/huasheng-source.tar.xz
+          tar -xJf /tmp/huasheng-source.tar.xz -C huasheng-project
+          test -f huasheng-project/src/app/huasheng/page.tsx
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install project dependencies
+        working-directory: huasheng-project
+        run: npm install --no-audit --no-fund
+
+      - name: Export static HTML for GitHub Pages
+        working-directory: huasheng-project
+        env:
+          EXPORT: '1'
+          GH_BASEPATH: ''
+        run: npm run build
+
+      - name: Combine new page with existing homepage
+        shell: bash
+        run: |
+          mkdir -p published
+          cp index.html published/index.html
+          cp -R huasheng-project/out/huasheng published/
+          cp -R huasheng-project/out/_next published/
+          touch published/.nojekyll
+          test -s published/huasheng/index.html
+          echo "Existing homepage retained; Huasheng page exported."
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: published
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
